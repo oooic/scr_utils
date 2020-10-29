@@ -40,6 +40,11 @@ flags.DEFINE_bool(
     True,
     'test',
     short_name='t')
+flags.DEFINE_bool(
+    'exec',
+    True,
+    'test',
+    short_name='e')
 
 
 def screenshot_daemon(arg=None, kws=None, pf=log_to_stdout):
@@ -88,6 +93,8 @@ def main(argv):
             logpath=os.path.join(base, "python_daemon.log"),
             kws=None
         )
+    if FLAGS.exec:
+        mv_default(test=False)
 
 
 def sukusho():
