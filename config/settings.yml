@@ -1,0 +1,4 @@
+DEFAULT:
+  jikanwari_path: config/jikanwari.csv
+  prefix: スクリーンショット
+  dirname: ~/Desktop
