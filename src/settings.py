@@ -6,7 +6,7 @@ import yaml
 import subprocess
 
 
-def reset_setting():
+def reset_jikanwari():
     jigen = {
         1: "08:30~10:25",
         2: "10:25~12:10",
@@ -28,8 +28,13 @@ def reset_setting():
     base = os.path.join(home, ".myscreenshot")
     os.makedirs(base, exist_ok=True)
     jikanwari_path = os.path.join(base, "jikanwari.csv")
-    setting_path = os.path.join(base, "settings.yml")
     pd.concat([jigen, jikanwari], axis=1).to_csv(jikanwari_path)
+
+
+def reset_settings():
+    home = expanduser("~")
+    base = os.path.join(home, ".myscreenshot")
+    setting_path = os.path.join(base, "settings.yml")
     res = subprocess.run(
         "defaults read com.apple.screencapture location",
         shell=True,
@@ -51,19 +56,40 @@ def reset_setting():
             "MOVE": {
                 "prefix": prefix,
                 "dirname": dirname,
-                "savedirname": "~/Desktop",
-                "jikanwari_path": "jikanwari.csv"
+                "savedirname": "~/Desktop"
             }
         }, yf, default_flow_style=False)
 
 
-def change_setting():
-    import subprocess
+def change_jikanwari():
     home = expanduser("~")
     base = os.path.join(home, ".myscreenshot")
     jikanwari_path = os.path.join(base, "jikanwari.csv")
     subprocess.run(f"open {jikanwari_path}", shell=True)
 
 
-if __name__ == "__main__":
-    change_setting()
+def change_savedir():
+    home = expanduser("~")
+    base = os.path.join(home, ".myscreenshot")
+    with open(os.path.join(base, "settings.yml"), "r") as f:
+        cfgold = yaml.load(f, Loader=yaml.FullLoader)
+    reset_settings()
+    setting_path = os.path.join(base, "settings.yml")
+    with open(os.path.join(base, "settings.yml"), "r") as f:
+        cfg = yaml.load(f, Loader=yaml.FullLoader)
+    savedirname = input()
+    if os.path.isdir(savedirname):
+        cfg["MOVE"]["savedirname"] = savedirname
+    else:
+        cfg["MOVE"]["savedirname"] = cfgold["MOVE"]["savedirname"]
+    with open(setting_path, "w") as yf:
+        yaml.dump(
+            cfg,
+            yf,
+            default_flow_style=False
+        )
+
+
+def init():
+    reset_jikanwari()
+    reset_settings()
