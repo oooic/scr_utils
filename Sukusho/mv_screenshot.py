@@ -27,7 +27,8 @@ def mv_screenshot(prefix, dirname, savedirname, jikanwari_path, test=False):
 
     def movepath(path):
         flag = re.search(cvtpath, path)
-        if flag is not None and len(flag.groups()) == 5:
+
+        if flag is not None and len(flag.groups()) == 6:
             date = flag.groups()
             date = list(map(lambda x: int(x), date))
             day = dtdt(*date).strftime("%a")
