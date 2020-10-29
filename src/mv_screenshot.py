@@ -6,14 +6,13 @@ def mv_screenshot(prefix, dirname, savedirname, jikanwari_path):
     import pandas as pd
     import shutil
     import glob
-    home = expanduser("~")
     cvtpath = re.compile(
         prefix + r"[\s\S]*?(\d{4}).(\d\d).(\d\d)[\s\S]*?(\d\d?).(\d\d).\d\d")
     re_jikanwari = re.compile(r"(\d\d?):(\d\d)~(\d\d?):(\d\d)")
     namepath = re.compile(
         prefix + r"[\s\S]*?(\d{4}.\d\d.\d\d[\s\S]*?\d\d?.\d\d.\d\d\..*)")
+    savedirname = savedirname.replace("~", expanduser("~"))
     jikanwari = pd.read_csv(jikanwari_path, index_col=0)
-    savedirname = savedirname.replace("~", home)
 
     def conv_jikanwari(txt):
         jikan = re.search(re_jikanwari, txt).groups()
@@ -62,6 +61,6 @@ if __name__ == "__main__":
     with open(os.path.join(base, "settings.yml"), "r") as f:
         cfg = yaml.load(f, Loader=yaml.FullLoader)
     cfgmv = cfg["MOVE"]
-    cfgmv["jikanwari_path"] = os.path.join(base, cfgmv["jikanwari_path"])
-    myscr = mv_screenshot(**cfgmv)
+    jikanwari_path = os.path.join(base, "jikanwari.csv")
+    myscr = mv_screenshot(**cfgmv, jikanwari_path=jikanwari_path)
     myscr()
