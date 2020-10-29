@@ -57,6 +57,7 @@ def reset_settings():
                 "prefix": prefix,
                 "dirname": dirname,
                 "savedirname": "~/Desktop"
+
             }
         }, yf, default_flow_style=False)
 
@@ -65,7 +66,10 @@ def change_jikanwari():
     home = expanduser("~")
     base = os.path.join(home, ".myscreenshot")
     jikanwari_path = os.path.join(base, "jikanwari.csv")
-    subprocess.run(f"open {jikanwari_path}", shell=True)
+    res = subprocess.run(f"open {jikanwari_path} -a 'Microsoft Excel'",
+                         shell=True)
+    if res.returncode != 0:
+        res = subprocess.run(f"open {jikanwari_path}", shell=True)
 
 
 def change_savedir():
@@ -93,3 +97,4 @@ def change_savedir():
 def init():
     reset_jikanwari()
     reset_settings()
+    change_jikanwari()
