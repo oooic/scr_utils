@@ -94,7 +94,7 @@ def change_savedir():
             if flg == "Yes" or flg == "No":
                 break
             else:
-                print("invalid input;type Yes or No")
+                print("invalid input:type Yes or No")
         if flg == "Yes":
             os.makedirs(savedirname)
             cfg["MOVE"]["savedirname"] = savedirname
