@@ -7,7 +7,7 @@ def mv_screenshot(prefix, dirname, savedirname, jikanwari_path, test=False):
     import shutil
     import glob
     cvtpath = re.compile(
-        prefix + r"[\s\S]*?(\d{4}).(\d\d).(\d\d)[\s\S]*?(\d\d?).(\d\d).(\d\d)")
+        prefix + r"[\s\S]*?(\d{4}).(\d\d).(\d\d)[\s\D]*?(\d\d?).(\d\d).(\d\d)")
     re_jikanwari = re.compile(r"(\d\d?):(\d\d)~(\d\d?):(\d\d)")
     savedirname = savedirname.replace("~", expanduser("~"))
     dirname = dirname.replace("~", expanduser("~"))
