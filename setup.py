@@ -20,7 +20,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="Sukusho",
-    version="0.0.5",
+    version="0.0.12",
     author="kota oishi",
     author_email="oishi-kota454@g.ecc.u-tokyo.ac.jp",
     description="Easy screenshot sorter for Mac for students",
@@ -39,7 +39,8 @@ setup(
     entry_points={
         'console_scripts': [
             'sukusho=Sukusho.main:sukusho',
-            'sukushoinit=Sukusho.settings:init'
+            'sukushoinit=Sukusho.settings:init',
+            'sukushoclean=Sukusho.mv_screenshot:mv_default'
         ],
     },
 
