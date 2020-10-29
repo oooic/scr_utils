@@ -56,16 +56,16 @@ screenshot_daemon = interval_run(1)(screenshot_daemon)
 
 
 def main(argv):
-    if flags.jikanwari:
+    if FLAGS.jikanwari:
         change_jikanwari()
         return 0
-    if flags.reset:
+    if FLAGS.reset:
         init()
-    if flags.settings:
+    if FLAGS.settings:
         change_savedir()
-    if flags.test:
+    if FLAGS.test:
         mv_default()
-    if flags.startdaemon:
+    if FLAGS.startdaemon:
         start_daemon(
             screenshot_daemon,
             'screenshot_daemon',
@@ -73,11 +73,19 @@ def main(argv):
             logpath=os.path.join(base, "python_daemon.log"),
             kws=None
         )
-    elif flags.stopdaemon:
-        with open(os.path.join(base, "python_daemon.pid"), "rb") as f:
+    elif FLAGS.stopdaemon:
+        pidpath = os.path.join(base, "python_daemon.pid")
+        if not os.path.isfile(pidpath):
+            return None
+        with open(pidpath, "rb") as f:
             pid = f.read().rstrip()
         os.kill(int(pid), signal.SIGKILL)
+        os.remove(pidpath)
 
 
-if __name__ == '__main__':
+def sukusho():
+    app.run(main)
+
+
+if __name__ == "__main__":
     app.run(main)
