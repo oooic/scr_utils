@@ -51,7 +51,7 @@ def mv_screenshot(prefix, dirname, savedirname, jikanwari_path):
     return wrapper
 
 
-if __name__ == "__main__":
+def mv_default():
     import yaml
     from os.path import expanduser
     import os
@@ -64,3 +64,7 @@ if __name__ == "__main__":
     jikanwari_path = os.path.join(base, "jikanwari.csv")
     myscr = mv_screenshot(**cfgmv, jikanwari_path=jikanwari_path)
     myscr()
+
+
+if __name__ == "__main__":
+    mv_default()
