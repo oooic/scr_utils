@@ -50,7 +50,7 @@ def screenshot_daemon(arg=None, kws=None, pf=log_to_stdout):
 
 home = expanduser("~")
 base = os.path.join(home, ".myscreenshot")
-
+pidpath = os.path.join(base, "python_daemon.pid")
 start_daemon = start_daemon(log_to_stdout)
 screenshot_daemon = interval_run(1)(screenshot_daemon)
 
@@ -63,9 +63,24 @@ def main(argv):
         init()
     if FLAGS.settings:
         change_savedir()
+    if FLAGS.stopdaemon:
+        if not os.path.isfile(pidpath):
+            return None
+        with open(pidpath, "rb") as f:
+            pid = f.read().rstrip()
+        os.kill(int(pid), signal.SIGKILL)
+        os.remove(pidpath)
+        print("sukusho-daemon is safely killed")
+        return None
     if FLAGS.test:
-        mv_default()
+        mv_default(test=True)
+        if not FLAGS.startdaemon:
+            print("Your Sukusho is ready!!")
     if FLAGS.startdaemon:
+        if os.path.isfile(pidpath):
+            print("sukusho-daemon is already started.")
+            return None
+        print("sukusho-daemon started!")
         start_daemon(
             screenshot_daemon,
             'screenshot_daemon',
@@ -73,14 +88,6 @@ def main(argv):
             logpath=os.path.join(base, "python_daemon.log"),
             kws=None
         )
-    elif FLAGS.stopdaemon:
-        pidpath = os.path.join(base, "python_daemon.pid")
-        if not os.path.isfile(pidpath):
-            return None
-        with open(pidpath, "rb") as f:
-            pid = f.read().rstrip()
-        os.kill(int(pid), signal.SIGKILL)
-        os.remove(pidpath)
 
 
 def sukusho():
