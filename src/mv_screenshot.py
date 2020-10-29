@@ -1,4 +1,4 @@
-def mv_screenshot(jikanwari_path, prefix, dirname):
+def mv_screenshot(prefix, dirname, savedirname, jikanwari_path):
     from datetime import datetime as dtdt
     import re
     from os.path import expanduser
@@ -13,7 +13,7 @@ def mv_screenshot(jikanwari_path, prefix, dirname):
     namepath = re.compile(
         prefix + r"[\s\S]*?(\d{4}.\d\d.\d\d[\s\S]*?\d\d?.\d\d.\d\d\..*)")
     jikanwari = pd.read_csv(jikanwari_path, index_col=0)
-    dirname = dirname.replace("~", home)
+    savedirname = savedirname.replace("~", home)
 
     def conv_jikanwari(txt):
         jikan = re.search(re_jikanwari, txt).groups()
@@ -25,6 +25,8 @@ def mv_screenshot(jikanwari_path, prefix, dirname):
     def between(x, start, end):
         return start < x < end
     jikanwariemb = jikanwari["jigen"].map(conv_jikanwari).to_dict()
+    target = jikanwari.isnull()
+    print(target)
 
     def movepath(path):
         flag = re.search(cvtpath, path)
@@ -37,15 +39,14 @@ def mv_screenshot(jikanwari_path, prefix, dirname):
                 if between(dateemb, *jikanwariemb[key]):
                     jigen = key
                     break
-            lesson = jikanwari.loc[jigen, day]
-            if lesson != pd.NA:
-                dirpath = os.path.join(dirname, jikanwari.loc[jigen, day])
+            if not target.loc[jigen, day]:
+                dirpath = os.path.join(savedirname, jikanwari.loc[jigen, day])
                 filename = re.search(namepath, path).groups()[0]
                 os.makedirs(dirpath, exist_ok=True)
                 shutil.move(path, os.path.join(dirpath, filename))
 
     def wrapper():
-        pathlst = glob.glob(os.path.join(dirname, "*"))
+        pathlst = glob.glob(str(os.path.join(savedirname, "*")))
         for path in pathlst:
             movepath(path)
     return wrapper
@@ -53,9 +54,14 @@ def mv_screenshot(jikanwari_path, prefix, dirname):
 
 if __name__ == "__main__":
     import yaml
-    PATH_TO_BIN = "../"
-    with open(PATH_TO_BIN + "config/settings.yml", "r") as f:
-        cfg = yaml.load(f, Loader=yaml.FullLoader)["DEFAULT"]
-    cfg["jikanwari_path"] = PATH_TO_BIN + cfg["jikanwari_path"]
-    myscr = mv_screenshot(**cfg)
+    from os.path import expanduser
+    import os
+
+    home = expanduser("~")
+    base = os.path.join(home, ".myscreenshot")
+    with open(os.path.join(base, "settings.yml"), "r") as f:
+        cfg = yaml.load(f, Loader=yaml.FullLoader)
+    cfgmv = cfg["MOVE"]
+    cfgmv["jikanwari_path"] = os.path.join(base, cfgmv["jikanwari_path"])
+    myscr = mv_screenshot(**cfgmv)
     myscr()
