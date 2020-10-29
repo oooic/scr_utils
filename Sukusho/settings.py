@@ -82,7 +82,7 @@ def change_savedir():
     with open(os.path.join(base, "settings.yml"), "r") as f:
         cfg = yaml.load(f, Loader=yaml.FullLoader)
     savedirname = input(
-        f"[default:{cfg['MOVE']['savedirname']}]/enter savedir path")
+        f"[now:{cfg['MOVE']['savedirname']}]/press enter or input savedir path")
     if savedirname == "":
         cfg["MOVE"]["savedirname"] = cfgold["MOVE"]["savedirname"]
     elif os.path.isdir(savedirname):
