@@ -7,11 +7,10 @@ def mv_screenshot(prefix, dirname, savedirname, jikanwari_path):
     import shutil
     import glob
     cvtpath = re.compile(
-        prefix + r"[\s\S]*?(\d{4}).(\d\d).(\d\d)[\s\S]*?(\d\d?).(\d\d).\d\d")
+        prefix + r"[\s\S]*?(\d{4}).(\d\d).(\d\d)[\s\S]*?(\d\d?).(\d\d).(\d\d)")
     re_jikanwari = re.compile(r"(\d\d?):(\d\d)~(\d\d?):(\d\d)")
-    namepath = re.compile(
-        prefix + r"[\s\S]*?(\d{4}.\d\d.\d\d[\s\S]*?\d\d?.\d\d.\d\d\..*)")
     savedirname = savedirname.replace("~", expanduser("~"))
+    dirname = dirname.replace("~", expanduser("~"))
     jikanwari = pd.read_csv(jikanwari_path, index_col=0)
 
     def conv_jikanwari(txt):
@@ -22,10 +21,9 @@ def mv_screenshot(prefix, dirname, savedirname, jikanwari_path):
         return strt, end
 
     def between(x, start, end):
-        return start < x < end
+        return start <= x < end
     jikanwariemb = jikanwari["jigen"].map(conv_jikanwari).to_dict()
     target = jikanwari.isnull()
-    print(target)
 
     def movepath(path):
         flag = re.search(cvtpath, path)
@@ -34,18 +32,20 @@ def mv_screenshot(prefix, dirname, savedirname, jikanwari_path):
             date = list(map(lambda x: int(x), date))
             day = dtdt(*date).strftime("%a")
             dateemb = date[3] * 60 + date[4]
+            jigen = None
             for key in jikanwariemb.keys():
                 if between(dateemb, *jikanwariemb[key]):
                     jigen = key
+                    print(jigen)
                     break
-            if not target.loc[jigen, day]:
+            if jigen is not None and not target.loc[jigen, day]:
                 dirpath = os.path.join(savedirname, jikanwari.loc[jigen, day])
-                filename = re.search(namepath, path).groups()[0]
+                filename = "{}-{}-{}_{}:{}:{}.png".format(*date)
                 os.makedirs(dirpath, exist_ok=True)
                 shutil.move(path, os.path.join(dirpath, filename))
 
     def wrapper():
-        pathlst = glob.glob(str(os.path.join(savedirname, "*")))
+        pathlst = glob.glob(str(os.path.join(dirname, "*")))
         for path in pathlst:
             movepath(path)
     return wrapper
