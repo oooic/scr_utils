@@ -1,4 +1,4 @@
-def mv_screenshot(prefix, dirname, savedirname, jikanwari_path):
+def mv_screenshot(prefix, dirname, savedirname, jikanwari_path, test=False):
     from datetime import datetime as dtdt
     import re
     from os.path import expanduser
@@ -36,13 +36,12 @@ def mv_screenshot(prefix, dirname, savedirname, jikanwari_path):
             for key in jikanwariemb.keys():
                 if between(dateemb, *jikanwariemb[key]):
                     jigen = key
-                    print(jigen)
                     break
             if jigen is not None and not target.loc[jigen, day]:
                 dirpath = os.path.join(savedirname, jikanwari.loc[jigen, day])
-                filename = "{}-{}-{}_{}:{}:{}.png".format(*date)
                 os.makedirs(dirpath, exist_ok=True)
-                shutil.move(path, os.path.join(dirpath, filename))
+                if not test:
+                    shutil.move(path, dirpath)
 
     def wrapper():
         pathlst = glob.glob(str(os.path.join(dirname, "*")))
@@ -51,7 +50,7 @@ def mv_screenshot(prefix, dirname, savedirname, jikanwari_path):
     return wrapper
 
 
-def mv_default():
+def mv_default(test=False):
     import yaml
     from os.path import expanduser
     import os
@@ -62,7 +61,7 @@ def mv_default():
         cfg = yaml.load(f, Loader=yaml.FullLoader)
     cfgmv = cfg["MOVE"]
     jikanwari_path = os.path.join(base, "jikanwari.csv")
-    myscr = mv_screenshot(**cfgmv, jikanwari_path=jikanwari_path)
+    myscr = mv_screenshot(**cfgmv, jikanwari_path=jikanwari_path, test=test)
     myscr()
 
 
