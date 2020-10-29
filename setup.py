@@ -20,7 +20,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="Sukusho",
-    version="0.0.1",
+    version="0.0.3",
     author="kota oishi",
     author_email="oishi-kota454@g.ecc.u-tokyo.ac.jp",
     description="Easy screenshot sorter for Mac for students",
@@ -36,4 +36,11 @@ setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
+    entry_points={
+        'console_scripts': [
+            'sukusho=Sukusho.main:sukusho',
+            'sukushoinit=Sukusho.settings:init'
+        ],
+    },
+
 )
