@@ -81,11 +81,25 @@ def change_savedir():
     setting_path = os.path.join(base, "settings.yml")
     with open(os.path.join(base, "settings.yml"), "r") as f:
         cfg = yaml.load(f, Loader=yaml.FullLoader)
-    savedirname = input()
-    if os.path.isdir(savedirname):
+    savedirname = input(
+        f"[default:{cfg['MOVE']['savedirname']}]/enter savedir path")
+    if savedirname == "":
+        cfg["MOVE"]["savedirname"] = cfgold["MOVE"]["savedirname"]
+    elif os.path.isdir(savedirname):
         cfg["MOVE"]["savedirname"] = savedirname
     else:
-        cfg["MOVE"]["savedirname"] = cfgold["MOVE"]["savedirname"]
+        flg = "No"
+        while True:
+            flg = input(f"create {savedirname}:Yes/[No]")
+            if flg == "Yes" or flg == "No":
+                break
+            else:
+                print("invalid input;type Yes or No")
+        if flg == "Yes":
+            os.makedirs(savedirname)
+            cfg["MOVE"]["savedirname"] = savedirname
+        else:
+            cfg["MOVE"]["savedirname"] = cfgold["MOVE"]["savedirname"]
     with open(setting_path, "w") as yf:
         yaml.dump(
             cfg,
@@ -97,4 +111,5 @@ def change_savedir():
 def init():
     reset_jikanwari()
     reset_settings()
+    change_savedir()
     change_jikanwari()
