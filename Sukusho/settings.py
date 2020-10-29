@@ -38,7 +38,7 @@ def reset_settings():
     res = subprocess.run(
         "defaults read com.apple.screencapture location",
         shell=True,
-        stdout=subprocess.PIPE)
+        capture_output=True)
     if res.returncode == 0:
         dirname = res.stdout[:-1].decode()
     else:
@@ -46,7 +46,7 @@ def reset_settings():
     res = subprocess.run(
         "defaults read com.apple.screencapture name",
         shell=True,
-        stdout=subprocess.PIPE)
+        capture_output=True)
     if res.returncode == 0:
         prefix = res.stdout[:-1].decode()
     else:
