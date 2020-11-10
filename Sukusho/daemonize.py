@@ -68,7 +68,7 @@ def interval_run(interval):
     return _deco
 
 
-def start_daemon(pf):
+def start_daemon(pf, maxRepeat=10, errorsleep=10):
     def wrapper(func, *args, pidpath=None, logpath=None, **kws):
         '''対象の関数をデーモン化
         SIGTERMで終了 関数内でのエラーでは停止しない(1分sleep)
@@ -115,6 +115,7 @@ def start_daemon(pf):
         # 内部で実行される
         def forever():
             pf("*Python daemon Started*")
+            repeat = 0
             while True:
                 try:
                     func(*args, **kws)
@@ -126,8 +127,16 @@ def start_daemon(pf):
 
                 # それ以外のエラーは無視して動き続ける
                 except Exception as e:
-                    pf('Uncaught exception was raised, but process continue.', e)
-
+                    if repeat < maxRepeat:
+                        repeat += 1
+                        pf('Uncaught exception was raised, but process continue.', e)
+                        pf(f'sleep:{errorsleep}s')
+                        time.sleep(errorsleep)
+                        continue
+                    else:
+                        pf('Uncaught exception was repeating. Process stop.', e)
+                        break
+                repeat = 0
         with dc:
             forever()
     return wrapper
