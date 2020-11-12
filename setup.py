@@ -20,7 +20,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="Sukusho",
-    version="0.0.14",
+    version="0.1.0",
     author="kota oishi",
     author_email="oishi-kota454@g.ecc.u-tokyo.ac.jp",
     description="Easy screenshot sorter for Mac for students",
