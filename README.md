@@ -1,5 +1,5 @@
 [![Downloads](https://pepy.tech/badge/sukusho)](https://pepy.tech/project/sukusho)
-![License](https://img.shields.io/badge/license-MIT.0-brightgreen.svg)
+![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)
 # Sukusho
 MacbookPro及びMacbookAir向けスクショクリーナー。
 
