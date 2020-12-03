@@ -1,7 +1,6 @@
 import sys
 import time
 from datetime import datetime, timedelta
-# pip
 import daemon
 import daemon.pidfile
 
